@@ -36,7 +36,7 @@ webgraphics: webgraphics.ml
 	cp webgraphics.ml turtlegraphics.ml
 
 turtlegraphics.cmo: webgraphics
-	 ocamlfind ocamlc -package lwt -package js_of_ocaml -package js_of_ocaml.syntax -syntax camlp4o -linkpkg -o turtlegraphics.byte turtlegraphics.ml
+	 ocamlfind ocamlc -package lwt -package js_of_ocaml -package js_of_ocaml.ppx -linkpkg -o turtlegraphics.byte turtlegraphics.ml
 
 logoturtle.cmo: logoturtle.ml turtlegraphics.cmo
 	ocamlc -c logoturtle.ml
@@ -49,10 +49,10 @@ lexer.cmo: lexer.ml parser.cmo
 	ocamlc -c lexer.ml
 
 logoturtle.byte: logoturtle.ml lexer.cmo parser.cmo turtlegraphics.cmo
-	ocamlfind ocamlc -package js_of_ocaml -package js_of_ocaml.syntax -syntax camlp4o -linkpkg turtlegraphics.cmo logoturtle.ml -o logoturtle.byte
+	ocamlfind ocamlc -package js_of_ocaml -package js_of_ocaml.ppx -linkpkg turtlegraphics.cmo logoturtle.ml -o logoturtle.byte
 
 logoweb.byte: logoweb.ml logoturtle.cmo parser.cmo lexer.cmo
-	ocamlfind ocamlc -package js_of_ocaml -package js_of_ocaml.syntax -syntax camlp4o -linkpkg turtlegraphics.cmo logoturtle.cmo lexer.cmo parser.cmo logoweb.ml -o logoweb.byte
+	ocamlfind ocamlc -package js_of_ocaml -package js_of_ocaml.ppx -linkpkg turtlegraphics.cmo logoturtle.cmo lexer.cmo parser.cmo logoweb.ml -o logoweb.byte
 
 logoweb.js: logoweb.byte
 	js_of_ocaml --pretty --no-inline --debug-info logoweb.byte

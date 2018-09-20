@@ -5,12 +5,12 @@ open Logoturtle
 module Html = Dom_html
 
 let js = Js.string
-let document = Html.window##document
+let document = Html.window##.document
 
-let append_text e s = Dom.appendChild e (document##createTextNode (js s))
+let append_text e s = Dom.appendChild e (document##(createTextNode (js s)))
 
 let replace_child p n =
-  Js.Opt.iter (p##firstChild) (fun c -> Dom.removeChild p c);
+  Js.Opt.iter (p##.firstChild) (fun c -> Dom.removeChild p c);
   Dom.appendChild p n
 
 exception SyntaxError of string
@@ -45,7 +45,7 @@ let interpet d state str = let lexbuf = Lexing.from_string str in
 
 let div = Html.createDiv document
 
-let start d s  _ = Dom.appendChild document##body d;
+let start d s  _ = Dom.appendChild document##.body d;
                    Dom.appendChild d s.cr.cr;
                    ignore (interpet d s "rt 360");
                    Js._false
@@ -53,6 +53,6 @@ let start d s  _ = Dom.appendChild document##body d;
 
 let _ =
   let state = Logoturtle.create_state in
-  Html.window##onload <- Html.handler (start div state);
-  Js.Unsafe.global##printOCAMLString <- Js.wrap_callback (fun s -> print_endline ("Hi " ^ (Js.to_string s)));
-  Js.Unsafe.global##interpetLOGO <- Js.wrap_callback (fun s -> (js (interpet div state (Js.to_string s))))
+  Html.window##.onload := Html.handler (start div state);
+  Js.Unsafe.global##.printOCAMLString := Js.wrap_callback (fun s -> print_endline ("Hi " ^ (Js.to_string s)));
+  Js.Unsafe.global##.interpetLOGO := Js.wrap_callback (fun s -> (js (interpet div state (Js.to_string s))))

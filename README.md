@@ -73,8 +73,7 @@ opam install lwt
 ### Install js_of_ocaml
 
 ```
-opam install js_of_ocaml
-opam install js_of_ocaml-camlp4
+opam install js_of_ocaml-ppx
 
 ```
 
