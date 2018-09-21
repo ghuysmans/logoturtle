@@ -1,6 +1,6 @@
-open Core
 open Lexer
 open Lexing
+open Printf
 
 
 let print_position outx lexbuf =
@@ -27,34 +27,29 @@ let rec parse_print_and_eval lexbuf outfile =
   Logoturtle.eval_commands_to_file ast_list outfile
 
 let basename filename =
-  let lst = String.split filename ~on:'/' in
-  let base = (match List.hd (List.rev lst) with
-              | None -> filename
-              | Some s -> s) in
-  let lst2 = String.split base ~on:'.' in
-  match List.hd lst2 with
-  | None -> base
-  | Some s -> s
+  Filename.(remove_extension (basename filename))
 
-let loop filename () =
-  let inx = In_channel.create filename in
+let loop filename =
+  let inx = open_in filename in
   let lexbuf = Lexing.from_channel inx in
-  let outfile = ((basename filename) ^ ".png") in
+  let outfile = basename filename ^ ".png" in
   print_string ("Writing output to " ^ outfile ^ "\n");
   lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
   parse_print_and_eval lexbuf outfile;
   print_string "\n";
-  In_channel.close inx
+  close_in inx
 
-let spec =
-  let open Command.Spec in
-  empty
-  +> anon ("filename" %: string)
 
-let command =
-  Command.basic_spec    ~summary: "Parse and interpet Logo"
-                        ~readme:(fun () -> "More detailed information")
-    spec
-    (fun filename () -> loop filename ())
+open Cmdliner
 
-let () =  Command.run ~version:"1.0" ~build_info:"RWO" command
+let filename =
+  let doc = "Logo script" in
+  Arg.(required & pos 0 (some string) None & info [] ~doc ~docv:"SCRIPT")
+
+let () =
+  let cmd =
+    let doc = "parse and interpet Logo" in
+    Term.(const loop $ filename),
+    Term.info "logo" ~doc ~version:"1.0"
+  in
+  Term.(exit @@ eval cmd)

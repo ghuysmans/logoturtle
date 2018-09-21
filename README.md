@@ -65,7 +65,6 @@ opam install cairo2
 ### Install Dependencies
 
 ```
-opam install core
 opam install menhir
 opam install lwt
 ```
