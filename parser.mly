@@ -1,6 +1,6 @@
 %{
     (* Put OCaml helper functions here *)
-    open Logoturtle
+    open Ast
 %}
 
 %token <float> FLOAT
@@ -42,7 +42,7 @@
 %token RIGHT_PAREN
 %token EOF
 
-%start <Logoturtle.command list> prog
+%start <Ast.command list> prog
 
 (* the order of the following is important to define precedence *)
 %nonassoc SIN COS POWER EXP LN RANDOM

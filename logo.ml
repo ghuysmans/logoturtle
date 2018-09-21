@@ -18,11 +18,11 @@ let parse_with_error lexbuf =
      exit (-1)
 
 let rec parse_and_print lexbuf =
-  Logoturtle.print_commands (parse_with_error lexbuf)
+  Ast.print_commands (parse_with_error lexbuf)
 
 let rec parse_print_and_eval lexbuf outfile =
   let ast_list = parse_with_error lexbuf in
-  Logoturtle.print_commands ast_list;
+  Ast.print_commands ast_list;
   print_string "\nnow evaling\n";
   Logoturtle.eval_commands_to_file ast_list outfile
 

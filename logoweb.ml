@@ -27,11 +27,11 @@ let parse_with_error lexbuf =
      raise (SyntaxError ("Parser error " ^ (print_position lexbuf)))
 
 let rec parse_and_print lexbuf =
-  Logoturtle.print_commands (parse_with_error lexbuf)
+  Ast.print_commands (parse_with_error lexbuf)
 
 let rec parse_print_and_eval lexbuf state =
   let ast_list = parse_with_error lexbuf in
-  Logoturtle.print_commands ast_list;
+  Ast.print_commands ast_list;
   print_string "\nnow evaling\n";
   ignore (Logoturtle.eval_commands_return_state state ast_list);
   ""
