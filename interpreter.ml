@@ -1,3 +1,18 @@
+module type I = sig
+  type turtlecontext
+  val stroke : turtlecontext -> unit
+  val move_to : turtlecontext -> float -> float -> unit
+  val line_to : turtlecontext -> float -> float -> unit
+  val set_line_width : turtlecontext -> float -> unit
+  val set_source_rgb : turtlecontext -> float -> float -> float -> unit
+  val write_out : turtlecontext -> string -> unit
+  val draw_turtle : turtlecontext -> float -> float -> float -> unit
+  val remove_turtle : turtlecontext -> unit
+  val create_context : int -> int -> turtlecontext
+end
+
+
+module Make (G: I) = struct
 open Ast
 
 type proc =
@@ -8,7 +23,7 @@ and
             mutable y: float;
             mutable heading: float;
             mutable pendown: bool;
-            mutable cr: Turtlegraphics.turtlecontext;
+            mutable cr: G.turtlecontext;
             mutable symbol_table: (string, proc) Hashtbl.t }
 
 
@@ -81,9 +96,9 @@ let logocolors = [| { r = 0.; g =  0.; b =  0.}; (* black *)
 let turn n state = state.heading <- state.heading +. n
 
 let domove state = if state.pendown then
-                     Turtlegraphics.line_to state.cr state.x state.y
+                     G.line_to state.cr state.x state.y
                    else
-                     Turtlegraphics.move_to state.cr state.x state.y
+                     G.move_to state.cr state.x state.y
 
 let forward n state = let r = (state.heading *. pi /. 180.0) -. (pi /. 2.0) in
                       let dx = n *. cos(r) in
@@ -96,7 +111,7 @@ let forward n state = let r = (state.heading *. pi /. 180.0) -. (pi /. 2.0) in
 (* primitive procedures *)
 
 let penup lst state = match lst with
-    | [] -> Turtlegraphics.stroke state.cr;
+    | [] -> G.stroke state.cr;
             state.pendown <- false
     | _ -> raise (ArgumentException "penup expected no arguments")
 let pendown lst state = match lst with
@@ -107,24 +122,24 @@ let setpencolor lst state = match lst with
     | [VFloat nfloat] -> let n = (int_of_float nfloat) in
                          if (n >= 0 && n < 16) then
                            let clr = logocolors.(n) in
-                           Turtlegraphics.stroke state.cr;
-                           Turtlegraphics.set_source_rgb state.cr clr.r clr.g clr.b;
-                           Turtlegraphics.move_to state.cr state.x state.y
+                           G.stroke state.cr;
+                           G.set_source_rgb state.cr clr.r clr.g clr.b;
+                           G.move_to state.cr state.x state.y
                          else
                            raise (ArgumentException "Invalid color specification")
     | _ -> raise (ArgumentException "setpencolor expected one numeric argument")
 let setpensize lst state = match lst with
-    | [VFloat size] -> Turtlegraphics.stroke state.cr;
-                       Turtlegraphics.move_to state.cr state.x state.y;
-                       Turtlegraphics.set_line_width state.cr size
+    | [VFloat size] -> G.stroke state.cr;
+                       G.move_to state.cr state.x state.y;
+                       G.set_line_width state.cr size
     | _ -> raise (ArgumentException "setpensize expected one numeric argument")
 
 let home lst state = match lst with
-  | [] -> Turtlegraphics.stroke state.cr;
+  | [] -> G.stroke state.cr;
           state.x <- 0.;
           state.y <- 0.;
           state.heading <- 0.;
-          Turtlegraphics.move_to state.cr state.x state.y
+          G.move_to state.cr state.x state.y
   | _ -> raise (ArgumentException "home expected no arguments")
 
 let seth lst state = match lst with
@@ -148,7 +163,7 @@ let setxy lst state = match lst with
   | _ -> raise (ArgumentException "setxy expected two numeric arguments")
 
 let create procs (names:string list) =
-  let ctx = Turtlegraphics.create_context 1024 1024 in
+  let ctx = G.create_context 1024 1024 in
   let table = Hashtbl.create 100 in
 
   (* add primitive procedures to hash table *)
@@ -182,7 +197,7 @@ let base_state = create [PrimitiveProc (0, penup);
                          "setxy"];;
 
 
-let write_out state filename = Turtlegraphics.write_out state.cr filename
+let write_out state filename = G.write_out state.cr filename
 
 (* primitive functions *)
 
@@ -356,21 +371,10 @@ let eval_commands_to_file cmds outfile = List.iter (eval base_state base_env) cm
 
 let create_state  = base_state
 
-let eval_commands_return_state state cmds = Turtlegraphics.remove_turtle state.cr;
+let eval_commands_return_state state cmds = G.remove_turtle state.cr;
                                             List.iter (eval state base_env) cmds;
                                             write_out state "dummy.png";
-                                            Turtlegraphics.draw_turtle state.cr state.x state.y
-                                                                       (state.heading *. pi /. 180.);
+                                            G.draw_turtle state.cr state.x state.y
+                                                                   (state.heading *. pi /. 180.);
                                             state
-
-
-(*
-let () = print_commands tree;
-         print_string "\n";
-         eval_commands tree
-*)
-
-(* Uncomment to test
-let () = eval base_state star;
-         write_out base_state
-*)
+end

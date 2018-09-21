@@ -1,6 +1,7 @@
 open Lexer
 open Lexing
 open Printf
+module I = Interpreter.Make (Cairographics)
 
 
 let print_position outx lexbuf =
@@ -24,7 +25,7 @@ let rec parse_print_and_eval lexbuf outfile =
   let ast_list = parse_with_error lexbuf in
   Ast.print_commands ast_list;
   print_string "\nnow evaling\n";
-  Logoturtle.eval_commands_to_file ast_list outfile
+  I.eval_commands_to_file ast_list outfile
 
 let basename filename =
   Filename.(remove_extension (basename filename))

@@ -1,6 +1,5 @@
 open Lexing
-open Turtlegraphics
-open Logoturtle
+module I = Interpreter.Make (Webgraphics)
 
 module Html = Dom_html
 
@@ -33,26 +32,26 @@ let rec parse_print_and_eval lexbuf state =
   let ast_list = parse_with_error lexbuf in
   Ast.print_commands ast_list;
   print_string "\nnow evaling\n";
-  ignore (Logoturtle.eval_commands_return_state state ast_list);
+  ignore (I.eval_commands_return_state state ast_list);
   ""
 
 let interpet d state str = let lexbuf = Lexing.from_string str in
                            try parse_print_and_eval lexbuf state with
                              | SyntaxError msg -> msg
-                             | ArgumentException msg -> msg
-                             | RuntimeException msg -> msg
+                             | I.ArgumentException msg -> msg
+                             | I.RuntimeException msg -> msg
                              |  _ -> "unknown exception"
 
 let div = Html.createDiv document
 
 let start d s  _ = Dom.appendChild document##.body d;
-                   Dom.appendChild d s.cr.cr;
+                   Dom.appendChild d s.I.cr.Webgraphics.cr;
                    ignore (interpet d s "rt 360");
                    Js._false
 
 
 let _ =
-  let state = Logoturtle.create_state in
+  let state = I.create_state in
   Html.window##.onload := Html.handler (start div state);
   Js.Unsafe.global##.printOCAMLString := Js.wrap_callback (fun s -> print_endline ("Hi " ^ (Js.to_string s)));
   Js.Unsafe.global##.interpetLOGO := Js.wrap_callback (fun s -> (js (interpet div state (Js.to_string s))))
