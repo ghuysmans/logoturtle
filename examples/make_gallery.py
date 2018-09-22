@@ -28,11 +28,11 @@ head = """ <html>
             </head>
             <body> """
 
-with open("samples.html", "w") as out:
+with open("index.html", "w") as out:
     print >>out, head
     for filename in os.listdir(os.getcwd()):
         if filename.endswith('.png'):
-            srcname  = 'sample_programs/' + filename[:-4] + '.logo'
+            srcname  = filename[:-4] + '.logo'
             print >>out, '<div class="container">'
             print >>out, '<div class="output"><img src="%s"/></div>' % filename
             with open(srcname, 'r') as logosrc:
