@@ -1,0 +1,16 @@
+opam-version: "1.2"
+name: "logoturtle-cairo"
+version: "1.0"
+maintainer: "Guillaume Huysmans <ghuysmans99@gmail.com>"
+authors: "Chris Maes <cmmaes@gmail.com>"
+homepage: "https://github.com/ghuysmans/logoturtle/"
+bug-reports: "https://github.com/ghuysmans/logoturtle/issues"
+dev-repo: "https://github.com/ghuysmans/logoturtle/"
+build: [["dune" "build" "-p" name "-j" jobs]]
+depends: [
+  "dune" {build}
+  "menhir"
+  "cmdliner"
+  "cairo2"
+]
+available: [ ocaml-version >= "4.04.0" ]

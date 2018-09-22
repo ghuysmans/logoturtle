@@ -48,32 +48,12 @@ opam init
 eval `opam config env`
 ```
 
-## Install ocamlfind
+## Install dependencies
+
+You may need something like `libcairo2-dev`.
 
 ```
-opam install ocamlfind
-```
-
-### Install the Cairo Ocaml bindings
-
-https://github.com/Chris00/ocaml-cairo
-
-```
-opam install cairo2
-```
-
-### Install Dependencies
-
-```
-opam install menhir
-opam install lwt
-```
-
-### Install js_of_ocaml
-
-```
-opam install js_of_ocaml-ppx
-
+opam install --deps-only .
 ```
 
 
@@ -95,8 +75,7 @@ Issuing the following command **to build both**.
 make
 ```
 
-will build and run a program called `logo.native`. It creates
-a file named `tree.png` that should contain a tree.
+will build a program called `logo.exe` in `_build/default/cairo/`.
 
 To clean up do
 ```
@@ -108,11 +87,12 @@ make clean
 Issuing the following command
 
 ```
-make logoweb.js
+make logo.js
 ```
 
-will build a Javascript library containing the interpreter. The file
-`index.html` shows how this library may be used from Javascript via
+will build a Javascript library containing the interpreter and install it in
+an ocamlfind `share` directory.
+The file `index.html` shows how this library may be used from Javascript via
 the `interpetLOGO` command.
 
 

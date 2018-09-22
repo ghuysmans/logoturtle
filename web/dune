@@ -1,0 +1,9 @@
+(executable
+ (name logo)
+ (js_of_ocaml (flags --pretty --no-inline --debug-info))
+ (preprocess (pps js_of_ocaml-ppx))
+ (libraries logoturtle js_of_ocaml))
+(install
+ (section share)
+ (package logoturtle-web)
+ (files (logo.bc.js as logo.js) jquery.console.js index.html))

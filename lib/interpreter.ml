@@ -208,7 +208,7 @@ let unary_float_value name g = UnaryVal
                                       (* print_endline (name ^ ":" ^ (string_of_float f) ^ "=" ^
                                                        (string_of_float c)); *)
                                       VFloat c
-                                   | VBool b -> raise (ArgumentException (name ^ " expected number")))
+                                   | VBool _ -> raise (ArgumentException (name ^ " expected number")))
 
 
 let sin_val = unary_float_value "sin" (fun deg -> sin (deg *. pi /. 180.))
@@ -240,11 +240,11 @@ let expr_of_value = function
 
 let float_of_value = function
   | VFloat f -> f
-  | VBool  b -> raise (RuntimeException "Number expected")
+  | VBool  _ -> raise (RuntimeException "Number expected")
 
 let bool_of_value = function
   | VBool b -> b
-  | VFloat f -> raise (RuntimeException "Boolean expected")
+  | VFloat _ -> raise (RuntimeException "Boolean expected")
 
 let value_of_mapval = function
   | Val v -> v
@@ -279,7 +279,7 @@ let rec eval_expr env = function
                            | VFloat a, VFloat b -> VFloat (a *. b)
                            | _,_ -> raise (RuntimeException "Numbers expected in multiplication"))
   | Divide (e1, e2)    -> (match (eval_expr env e1), (eval_expr env e2) with
-                           | VFloat a, VFloat 0.0 -> raise (RuntimeException "Division by zero")
+                           | VFloat _, VFloat 0.0 -> raise (RuntimeException "Division by zero")
                            | VFloat a, VFloat b   -> VFloat (a /. b)
                            | _,_ -> raise (RuntimeException "Numbers expected in division"))
   | Negate e           -> (match (eval_expr env e) with

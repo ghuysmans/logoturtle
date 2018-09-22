@@ -1,0 +1,5 @@
+(executable
+ (name logo)
+ (public_name logo)
+ (package logoturtle-cairo)
+ (libraries logoturtle cmdliner cairo2))

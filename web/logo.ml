@@ -1,5 +1,6 @@
 open Lexing
-module I = Interpreter.Make (Webgraphics)
+open Logoturtle
+module I = Interpreter.Make (Graphics)
 
 module Html = Dom_html
 
@@ -25,27 +26,27 @@ let parse_with_error lexbuf =
   | Parser.Error ->
      raise (SyntaxError ("Parser error " ^ (print_position lexbuf)))
 
-let rec parse_and_print lexbuf =
+let parse_and_print lexbuf =
   Ast.print_commands (parse_with_error lexbuf)
 
-let rec parse_print_and_eval lexbuf state =
+let parse_print_and_eval lexbuf state =
   let ast_list = parse_with_error lexbuf in
   Ast.print_commands ast_list;
   print_string "\nnow evaling\n";
   ignore (I.eval_commands_return_state state ast_list);
   ""
 
-let interpet d state str = let lexbuf = Lexing.from_string str in
-                           try parse_print_and_eval lexbuf state with
-                             | SyntaxError msg -> msg
-                             | I.ArgumentException msg -> msg
-                             | I.RuntimeException msg -> msg
-                             |  _ -> "unknown exception"
+let interpet _d state str = let lexbuf = Lexing.from_string str in
+                            try parse_print_and_eval lexbuf state with
+                              | SyntaxError msg -> msg
+                              | I.ArgumentException msg -> msg
+                              | I.RuntimeException msg -> msg
+                              |  _ -> "unknown exception"
 
 let div = Html.createDiv document
 
 let start d s  _ = Dom.appendChild document##.body d;
-                   Dom.appendChild d s.I.cr.Webgraphics.cr;
+                   Dom.appendChild d s.I.cr.Graphics.cr;
                    ignore (interpet d s "rt 360");
                    Js._false
 

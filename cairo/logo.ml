@@ -1,7 +1,8 @@
+open Logoturtle
 open Lexer
 open Lexing
 open Printf
-module I = Interpreter.Make (Cairographics)
+module I = Interpreter.Make (Graphics)
 
 
 let print_position outx lexbuf =
@@ -18,10 +19,10 @@ let parse_with_error lexbuf =
      fprintf stderr "%a: syntax error\n" print_position lexbuf;
      exit (-1)
 
-let rec parse_and_print lexbuf =
+let parse_and_print lexbuf =
   Ast.print_commands (parse_with_error lexbuf)
 
-let rec parse_print_and_eval lexbuf outfile =
+let parse_print_and_eval lexbuf outfile =
   let ast_list = parse_with_error lexbuf in
   Ast.print_commands ast_list;
   print_string "\nnow evaling\n";

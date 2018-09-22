@@ -1,4 +1,3 @@
-open Lwt
 open Js
 module Html = Dom_html
 
