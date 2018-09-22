@@ -1,4 +1,4 @@
-# A Logo Interperter in Ocaml (and Javascript)
+# A Logo Interperter in Ocaml (and JavaScript)
 
 ![A tree created in Logo](http://chrisma.es/logoturtle/samples/tree2.png)
 
@@ -14,17 +14,17 @@ programs and their graphical output.
 The following directions describe how to install the dependencies for
 running the code locally.
 
-### Install OCAML
+### Install OCaml
 
-Use the Real World OCAML installation instructions
+Use the Real World OCaml installation instructions
 https://github.com/realworldocaml/book/wiki/Installation-Instructions
 
 #### On Linux
 
 ```
-$ sudo add-apt-repository ppa:avsm/ppa
-$ sudo apt-get update
-$ sudo apt-get install curl build-essential m4 ocaml opam
+sudo add-apt-repository ppa:avsm/ppa
+sudo apt-get update
+sudo apt-get install curl build-essential m4 ocaml opam
 ```
 
 Then do
@@ -48,52 +48,31 @@ opam init
 eval `opam config env`
 ```
 
-## Install dependencies
+## Build
 
-You may need something like `libcairo2-dev`.
-
+You may need something like `libcairo2-dev` to produce .png files:
 ```
-opam install --deps-only .
-```
-
-
-## Building the Logo Interperter
-
-There are two different builds of the interperter:
-
-* A interpreter that runs from the command-line and uses Cairo as
-  backend to output .png files from Logo programs
-
-* A interpreter that runs from Javascript and uses a Canvas backend
-  to output graphics from Logo programs in the browser
-
-## Building the Command-line Interpreter
-
-Issuing the following command **to build both**.
-
-```
-make
+opam pin add logoturtle-cairo .
 ```
 
-will build a program called `logo.exe` in `_build/default/cairo/`.
-
-To clean up do
+The JavaScript canvas-based backend provides an `interpretLOGO` function.
+An index file in ocamlfind's `share` shows how this library may be used.
 ```
-make clean
-```
-
-## Building the Javascript Interpreter
-
-Issuing the following command
-
-```
-make logo.js
+opam pin add logoturtle-web .
 ```
 
-will build a Javascript library containing the interpreter and install it in
-an ocamlfind `share` directory.
-The file `index.html` shows how this library may be used from Javascript via
-the `interpetLOGO` command.
+## Run
+
+To produce a .png file:
+```
+logo samples/tree.logo
+```
+
+To test the interpreter in your browser:
+```shell
+xdg-open `opam config var share`/logoturtle-web #Linux
+open `opam config var share`/logoturtle-web #Mac
+```
 
 
 #### Logo Grammar
